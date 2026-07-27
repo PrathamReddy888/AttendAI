@@ -920,7 +920,7 @@ def mark_attendance():
                     'success': False,
                     'message': 'DB_OFFLINE',
                     'db_state': 'OPEN'
-                })
+                }), 503
 
             if existing.data:
                 skipped_names.append(name)
@@ -955,14 +955,14 @@ def mark_attendance():
                 'success': False,
                 'message': 'DB_ERROR',
                 'db_state': _supabase_breaker.state
-            })
+            }), 500
 
     if marked_names:
         return jsonify({'success': True, 'message': f'✅ Marked: {", ".join(marked_names)}'})
     elif skipped_names:
-        return jsonify({'success': False, 'message': f'⚠️ Already marked today: {", ".join(skipped_names)}'})
+        return jsonify({'success': False, 'message': f'⚠️ Already marked today: {", ".join(skipped_names)}'}), 409
     else:
-        return jsonify({'success': False, 'message': 'Face detected but not recognized. Re-register in better lighting.'})
+        return jsonify({'success': False, 'message': 'Face detected but not recognized. Re-register in better lighting.'}), 404
 
 # ================= END SESSION =================
 @app.route('/end_session', methods=['POST'])
